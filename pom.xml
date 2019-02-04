@@ -6,8 +6,7 @@
 	<groupId>org.activiti.cloud.examples</groupId>
 	<artifactId>activiti-cloud-modeling-standalone</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>activiticloudmodelingstandalone</name>
-	<description>Demo project for Spring Boot</description>
+	<name>Activiti Cloud :: Modeling(Standalone)</name>
 
 	<properties>
 		<java.version>11</java.version>
