@@ -1,0 +1,4 @@
+[submodule "submodule"]
+	path = submodule
+	url = https://github.com/Activiti/activiti-modeling-app.git
+	branch = daisuke-2324-standalone
