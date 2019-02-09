@@ -10,7 +10,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<activiti-cloud-modeling-dependencies.version>7.0.51</activiti-cloud-modeling-dependencies.version>
+		<activiti-cloud-modeling-dependencies.version>7.0.55</activiti-cloud-modeling-dependencies.version>
 		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
 		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version> <!-- required for jx -->
@@ -37,20 +37,6 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-		<dependency>
-			<groupId>org.activiti.cloud.process.model</groupId>
-			<artifactId>activiti-cloud-starter-process-model</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.activiti.cloud.common</groupId>
-					<artifactId>activiti-cloud-services-common-security-keycloak</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-openfeign-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<dependency>
 			<groupId>org.activiti.cloud.modeling</groupId>
 			<artifactId>activiti-cloud-starter-org</artifactId>
