@@ -15,6 +15,9 @@ public class TicketAuthPreAuthenticatedProcessingFilter extends AbstractPreAuthe
 	@Override
 	protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
+		if (cookies == null) {
+			return null;
+		}
 		for (Cookie cookie : cookies) {
 			if ("CSRF-TOKEN".equals(cookie.getName())) {
 				return cookie.getValue();
