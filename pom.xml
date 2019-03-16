@@ -10,7 +10,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<activiti-cloud-modeling-dependencies.version>7.0.55</activiti-cloud-modeling-dependencies.version>
+		<activiti-cloud-modeling-dependencies.version>7.1.29</activiti-cloud-modeling-dependencies.version>
 		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
 		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version> <!-- required for jx -->

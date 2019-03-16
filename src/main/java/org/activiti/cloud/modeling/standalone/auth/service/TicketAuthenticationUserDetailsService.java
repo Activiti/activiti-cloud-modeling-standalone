@@ -17,11 +17,14 @@ public class TicketAuthenticationUserDetailsService
 	@Override
 	public UserDetails loadUserDetails(PreAuthenticatedAuthenticationToken token) throws UsernameNotFoundException {
 		Object credentials = token.getCredentials();
-		if (credentials.toString() == "") {
+		if (credentials == null || credentials.toString() == "") {
 			throw new UsernameNotFoundException("User not found.");
 		}
 
 		String userId = TicketService.getUserId((String) credentials);
+		if (userId == null) {
+			throw new UsernameNotFoundException("User not found.");
+		}
 		Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
 		authorities.add(new SimpleGrantedAuthority("ROLE_ACTIVITI_MODELER"));
 		return new User(userId, (String) credentials, authorities);

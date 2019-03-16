@@ -1,63 +1,40 @@
 package org.activiti.cloud.modeling.standalone.auth.rest;
 
-import java.util.UUID;
+import java.util.Map;
 
 import org.activiti.cloud.modeling.standalone.auth.rest.model.Entry;
-import org.activiti.cloud.modeling.standalone.auth.rest.model.TicketRequest;
 import org.activiti.cloud.modeling.standalone.auth.rest.model.TicketResponse;
 import org.activiti.cloud.modeling.standalone.auth.service.AuthProperty;
 import org.activiti.cloud.modeling.standalone.auth.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/alfresco/api/-default-/public/authentication/versions/1")
+@RequestMapping("/activiti-app/app/authentication")
 public class AuthenticationController {
 
 	@Autowired
 	private AuthProperty authProperty;
 
-	@RequestMapping(path = "/tickets", method = RequestMethod.POST)
-	public TicketResponse post(@RequestBody TicketRequest request) {
-		if (!authProperty.isExists(request.getUserId(), request.getPassword())) {
+	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public TicketResponse post(@RequestParam Map<String, String> request,
+			@CookieValue(value = "CSRF-TOKEN", required = true) String token) {
+		if (!authProperty.isExists(request.get("j_username"), request.get("j_password"))) {
 			throw new UsernameNotFoundException("The user name or password you entered is incorrect.");
 		}
 		TicketResponse response = new TicketResponse();
 		Entry entry = new Entry();
-		entry.setId(UUID.randomUUID().toString());
-		entry.setUserId(request.getUserId());
+		entry.setId(token);
+		entry.setUserId(request.get("j_username"));
 		TicketService.setTicket(entry);
 		response.setEntry(entry);
 		return response;
 
-	}
-
-	@RequestMapping(path = "/tickets/-me-", method = RequestMethod.DELETE)
-	public void deleteTicketResponse(Authentication authentication) {
-		Object id = authentication.getCredentials();
-		if (id != null) {
-			TicketService.deleteTicket((String) id);
-		}
-	}
-
-	@RequestMapping(path = "/tickets/-me-", method = RequestMethod.GET)
-	public TicketResponse validateTicketResponse(Authentication authentication) {
-		Object id = authentication.getCredentials();
-		if (id != null) {
-			String userId = TicketService.getUserId((String) id);
-			if (userId != null) {
-				TicketResponse response = new TicketResponse();
-				Entry entry = new Entry();
-				entry.setId((String) id);
-				response.setEntry(entry);
-				return response;
-			}
-		}
-		throw new RuntimeException("Invalid ticket");
 	}
 }
