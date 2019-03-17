@@ -12,6 +12,7 @@ public class LocalSpringSecurityManager implements SecurityManager {
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             return "";
         }
+
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 

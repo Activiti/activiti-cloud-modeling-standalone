@@ -1,61 +1,66 @@
 package org.activiti.cloud.modeling.standalone.auth;
 
-import org.activiti.cloud.modeling.standalone.auth.service.TicketAuthenticationUserDetailsService;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Bean
-	public AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> authenticationUserDetailsService() {
-		return new TicketAuthenticationUserDetailsService();
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers(
+                         // Authentication endpoint
+                         "/**/app/authentication",
+                         // Logic page
+                         "/login",
+                         // Static resources for logic page
+                         "/**/*.json",
+                         "/**/*.css",
+                         "/**/*.png",
+                         "/**/*.js",
+                         "/**/*.svg")
+            .permitAll()
+            .anyRequest()
+            .authenticated()
+            .and()
+            .exceptionHandling()
+            .accessDeniedPage("/login")
+            .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+            .and()
+            .csrf()
+            .disable();
 
-	@Bean
-	public PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider() {
-		PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
-		provider.setPreAuthenticatedUserDetailsService(authenticationUserDetailsService());
-		provider.setUserDetailsChecker(new AccountStatusUserDetailsChecker());
-		return provider;
-	}
+        http.formLogin()
+            .loginProcessingUrl("/**/app/authentication")
+            .loginPage("/login") // ログインページ
+            .usernameParameter("j_username") // ユーザー名のパラメータ
+            .passwordParameter("j_password") // パスワードのパラメータ
+            .defaultSuccessUrl("/dashboard/projects") // 認証成功時の遷移先
+            .and();
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(preAuthenticatedAuthenticationProvider());
-	}
+        http.logout()
+            .logoutRequestMatcher(new AntPathRequestMatcher("/**/app/logout"))
+            .logoutSuccessUrl("/login");
+    }
 
-	@Bean
-	public AbstractPreAuthenticatedProcessingFilter preAuthenticatedProcessingFilter() throws Exception {
-		TicketAuthPreAuthenticatedProcessingFilter filter = new TicketAuthPreAuthenticatedProcessingFilter();
-		filter.setAuthenticationManager(authenticationManager());
-		return filter;
-	}
+    @Configuration
+    protected static class AuthenticationConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers(
-				// Authentication endpoint
-				"/activiti-app/app/authentication",
-				// Logic page
-				"/login",
-				// Static resources for logic page
-				"/**/*.json", "/**/*.css", "/**/*.png", "/**/*.js", "/**/*.svg").permitAll().anyRequest()
-				.authenticated().and().addFilter(preAuthenticatedProcessingFilter()).exceptionHandling()
-				.accessDeniedPage("/login").authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf()
-				.disable();
-	}
+        @Autowired
+        private LocalAuthenticationProvider authenticationProvider;
+
+        @Override
+        public void init(AuthenticationManagerBuilder auth) throws Exception {
+            auth.authenticationProvider(authenticationProvider);
+        }
+    }
 }
