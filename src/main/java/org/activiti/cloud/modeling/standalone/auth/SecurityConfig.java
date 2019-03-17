@@ -41,10 +41,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.formLogin()
             .loginProcessingUrl("/**/app/authentication")
-            .loginPage("/login") // ログインページ
-            .usernameParameter("j_username") // ユーザー名のパラメータ
-            .passwordParameter("j_password") // パスワードのパラメータ
-            .defaultSuccessUrl("/dashboard/projects") // 認証成功時の遷移先
+            .loginPage("/login")
+            .usernameParameter("j_username")
+            .passwordParameter("j_password")
+            .defaultSuccessUrl("/dashboard/projects")
             .and();
 
         http.logout()
