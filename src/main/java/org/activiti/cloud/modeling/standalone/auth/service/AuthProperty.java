@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @PropertySource("classpath:/auth.properties")
 public class AuthProperty {
+
     @Autowired
     private Environment env;
 

@@ -27,3 +27,6 @@ target
 .updatebot-repos/**
 
 *.versionsBackup
+
+# Build artifacts
+src/main/resources/static/**
