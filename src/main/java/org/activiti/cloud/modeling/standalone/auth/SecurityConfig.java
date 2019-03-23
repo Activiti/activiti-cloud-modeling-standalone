@@ -34,9 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .exceptionHandling()
             .accessDeniedPage("/login")
-            .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-            .and()
-            .csrf()
+            .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
+
+        // TODO
+        http.csrf()
             .disable();
 
         http.formLogin()
