@@ -1,9 +1,7 @@
-if [[ -n "${APP_CONFIG_BPM_HOST}" ]]
-then
-  replace="\/"
-  encoded=${APP_CONFIG_BPM_HOST//\//$replace}
-  sed -e "s/\"bpmHost\": \".*\"/\"bpmHost\": \"${encoded}\"/g" \
-    -i ./static/app.config.json
+#!/bin/sh
+
+if [ -n "${APP_CONFIG_BPM_HOST}" ];then
+  sed -i -e "s@\"bpmHost\": \".*\"@\"bpmHost\": \"${APP_CONFIG_BPM_HOST}\"@g" ./static/app.config.json
 fi
 
-java $JAVA_OPTS -DisUseExternalStaticResourceLocation=true -jar app.jar
+java $JAVA_OPTS -jar app.jar --isUseExternalStaticResourceLocation=true --externalStaticResourceLocation="file:/opt/static"

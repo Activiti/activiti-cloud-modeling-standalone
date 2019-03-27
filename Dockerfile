@@ -4,6 +4,6 @@ ENV PORT 8080
 EXPOSE 8080
 COPY target/*.jar /opt/app.jar
 COPY src/main/resources/static /opt/static
-COPY docker-entrypoint.sh /opt/docker-entrypoint.sh
+COPY docker-entrypoint.sh /
 WORKDIR /opt
-ENTRYPOINT [ "/opt/docker-entrypoint.sh" ]
+ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
